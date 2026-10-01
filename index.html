@@ -569,6 +569,7 @@
     regionId: "smithton",
     varietyId: "russet-burbank",
     plantingDate: null
+    customRegion: null
   };
 
   (function setDefaultPlantingDate() {
@@ -582,8 +583,10 @@
     return VARIETIES[0];
   }
   function currentRegion() {
+    if (state.regionId === "custom" && state.customRegion) return state.customRegion;
     for (var i = 0; i < REGIONS.length; i++) if (REGIONS[i].id === state.regionId) return REGIONS[i];
     return REGIONS[0];
+  }
   }
 
   /* ------------------------------------------------------------------
@@ -890,7 +893,48 @@
   }
 
   document.getElementById("header-sub").textContent = "Data as of " + fmtDateLong(GENERATED_DATE);
+  function fetchCustomLocation(lat, lon) {
+    var statusEl = document.getElementById("custom-location-status");
+    statusEl.textContent = "Fetching weather...";
+    var params = {
+      latitude: lat,
+      longitude: lon,
+      daily: "et0_fao_evapotranspiration,precipitation_sum",
+      timezone: "Australia/Hobart",
+      forecast_days: 7
+    };
+    var qs = Object.keys(params).map(function (k) {
+      return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+    }).join("&");
+    fetch("https://api.open-meteo.com/v1/forecast?" + qs)
+      .then(function (res) { return res.ok ? res.json() : Promise.reject(new Error("HTTP " + res.status)); })
+      .then(function (data) {
+        var dates = data.daily.time;
+        var etoVals = data.daily.et0_fao_evapotranspiration;
+        var rainVals = data.daily.precipitation_sum;
+        var week = dates.map(function (d, i) {
+          return { date: d, eto: etoVals[i], rain: rainVals[i] };
+        });
+        state.customRegion = { id: "custom", name: "Custom location (" + lat + ", " + lon + ")", week: week, live: true };
+        state.regionId = "custom";
+        statusEl.textContent = "Showing live forecast for " + lat + ", " + lon + ".";
+        renderRegionList();
+        renderAll();
+      })
+      .catch(function () {
+        statusEl.textContent = "Couldn't fetch weather for that location — check the coordinates and try again.";
+      });
+  }
 
+  document.getElementById("custom-location-btn").addEventListener("click", function () {
+    var lat = parseFloat(document.getElementById("custom-lat").value);
+    var lon = parseFloat(document.getElementById("custom-lon").value);
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      document.getElementById("custom-location-status").textContent = "Enter a valid latitude (-90 to 90) and longitude (-180 to 180).";
+      return;
+    }
+    fetchCustomLocation(lat, lon);
+  });
   renderMap();
   renderRegionList();
   renderPills();
