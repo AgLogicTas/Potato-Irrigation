@@ -354,6 +354,16 @@
       </div>
       <div class="map-legend">
         <div class="region-list" id="region-list"></div>
+        <div class="custom-location-box" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-hairline);">
+  <p style="font-size:12.5px;color:var(--text-secondary);margin:0 0 8px;">Or enter your own coordinates:</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <input type="number" id="custom-lat" placeholder="Latitude" step="0.0001" style="width:110px;padding:6px 8px;border:1px solid var(--border-hairline);border-radius:6px;">
+    <input type="number" id="custom-lon" placeholder="Longitude" step="0.0001" style="width:110px;padding:6px 8px;border:1px solid var(--border-hairline);border-radius:6px;">
+    <button id="custom-location-btn" type="button" style="padding:7px 14px;border-radius:6px;border:none;background:var(--brand-primary);color:#fff;font-weight:600;cursor:pointer;">Use this location</button>
+  </div>
+  <p id="custom-location-status" style="font-size:12px;color:var(--text-muted);margin:8px 0 0;"></p>
+</div>
+        
       </div>
     </div>
   </div>
