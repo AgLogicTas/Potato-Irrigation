@@ -846,14 +846,10 @@
 
   function renderDataNote(usingLiveData) {
     document.getElementById("footer-note").innerHTML =
-      "<strong>Brand:</strong> colours/type pixel-sampled from your site screenshots — send the design-file hex codes or logo file to lock these in exactly. " +
-      "<strong>Map:</strong> traced from the satellite reference image you supplied. " +
       "<strong>Data:</strong> ETo from Open-Meteo forecast (FAO-56 reference evapotranspiration)" +
       (usingLiveData
         ? " — refreshed automatically once a day for every region shown."
-        : " — showing fallback demo data; live data.json couldn't be reached (see fetch_weather.py / the update-weather.yml workflow).") + " " +
-      "<strong>Crop coefficient:</strong> Russet Burbank, Barrossa and Ranger Russet curves are Ag Logic's real trial data (weekly Kc), interpolated between weeks — the day-0 point holds flat at the week-1 value so the curve has a start point at planting. " +
-      "ETc = ETo × Kc; net irrigation = ETc − rainfall (floored at 0).";
+        : " — showing fallback demo data; live data.json couldn't be reached (see fetch_weather.py / the update-weather.yml workflow).");
   }
 
   /* ------------------------------------------------------------------
