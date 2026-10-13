@@ -502,7 +502,7 @@
     },
     {
       id: "barrossa",
-      name: "Barrossa",
+      name: "Barossa",
       points: [
         { day: 0, kc: 0.40 }, { day: 7, kc: 0.40 }, { day: 14, kc: 0.40 }, { day: 21, kc: 0.65 },
         { day: 28, kc: 0.85 }, { day: 35, kc: 0.99 }, { day: 42, kc: 1.13 }, { day: 49, kc: 1.28 },
@@ -515,6 +515,18 @@
     {
       id: "ranger-russet",
       name: "Ranger Russet",
+      points: [
+        { day: 0, kc: 0.40 }, { day: 7, kc: 0.40 }, { day: 14, kc: 0.40 }, { day: 21, kc: 0.65 },
+        { day: 28, kc: 0.85 }, { day: 35, kc: 0.99 }, { day: 42, kc: 1.12 }, { day: 49, kc: 1.22 },
+        { day: 56, kc: 1.28 }, { day: 63, kc: 1.30 }, { day: 70, kc: 1.30 }, { day: 77, kc: 1.30 },
+        { day: 84, kc: 1.30 }, { day: 91, kc: 1.28 }, { day: 98, kc: 1.18 }, { day: 105, kc: 0.98 },
+        { day: 112, kc: 0.80 }, { day: 119, kc: 0.62 }, { day: 126, kc: 0.48 }, { day: 133, kc: 0.44 },
+        { day: 140, kc: 0.40 }, { day: 147, kc: 0.40 }
+      ]
+    },
+    {
+      id: "innovator",
+      name: "Innovator",
       points: [
         { day: 0, kc: 0.40 }, { day: 7, kc: 0.40 }, { day: 14, kc: 0.40 }, { day: 21, kc: 0.65 },
         { day: 28, kc: 0.85 }, { day: 35, kc: 0.99 }, { day: 42, kc: 1.12 }, { day: 49, kc: 1.22 },
@@ -846,10 +858,14 @@
 
   function renderDataNote(usingLiveData) {
     document.getElementById("footer-note").innerHTML =
+      "<strong>Brand:</strong> colours/type pixel-sampled from your site screenshots — send the design-file hex codes or logo file to lock these in exactly. " +
+      "<strong>Map:</strong> traced from the satellite reference image you supplied. " +
       "<strong>Data:</strong> ETo from Open-Meteo forecast (FAO-56 reference evapotranspiration)" +
       (usingLiveData
         ? " — refreshed automatically once a day for every region shown."
-        : " — showing fallback demo data; live data.json couldn't be reached (see fetch_weather.py / the update-weather.yml workflow).");
+        : " — showing fallback demo data; live data.json couldn't be reached (see fetch_weather.py / the update-weather.yml workflow).") + " " +
+      "<strong>Crop coefficient:</strong> Russet Burbank, Barossa and Ranger Russet curves are Ag Logic's real trial data (weekly Kc), interpolated between weeks — the day-0 point holds flat at the week-1 value so the curve has a start point at planting. " +
+      "ETc = ETo × Kc; net irrigation = ETc − rainfall (floored at 0).";
   }
 
   /* ------------------------------------------------------------------
