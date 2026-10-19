@@ -21,17 +21,39 @@ import urllib.request
 import urllib.parse
 from datetime import datetime, timezone, timedelta
 
-# Real-world coordinates for each region shown on the calculator's map.
+# Real-world coordinates for every location offered on the calculator
+# (Tasmania pins from the Google Earth file; Victoria = Ballarat area).
 REGIONS = [
-    {"id": "smithton",       "name": "Smithton",              "lat": -40.8417, "lon": 145.1250},
-    {"id": "table-cape",     "name": "Table Cape / Wynyard",   "lat": -40.9839, "lon": 145.7178},
-    {"id": "sassafras",      "name": "Sassafras / Devonport",  "lat": -41.2818, "lon": 146.4857},
-    {"id": "waterhouse",     "name": "Waterhouse",             "lat": -40.9574, "lon": 147.5791},
-    {"id": "scottsdale",     "name": "Scottsdale",             "lat": -41.1611, "lon": 147.5164},
-    {"id": "cressy",         "name": "Cressy",                 "lat": -41.6830, "lon": 147.0830},
-    {"id": "campbell-town",  "name": "Campbell Town",          "lat": -41.9167, "lon": 147.5000},
-    {"id": "bothwell",       "name": "Bothwell",               "lat": -42.3833, "lon": 147.0000},
-    {"id": "marion-bay",     "name": "Marion Bay",             "lat": -42.7970, "lon": 147.9230},
+    {"id": "smithton", "name": "Smithton", "lat": -40.84177, "lon": 145.12585, "tz": "Australia/Hobart"},
+    {"id": "table-cape", "name": "Table Cape / Wynyard", "lat": -40.95675, "lon": 145.71819, "tz": "Australia/Hobart"},
+    {"id": "sassafras", "name": "Sassafras / Devonport", "lat": -41.29055, "lon": 146.50511, "tz": "Australia/Hobart"},
+    {"id": "waterhouse", "name": "Waterhouse", "lat": -40.93138, "lon": 147.61799, "tz": "Australia/Hobart"},
+    {"id": "scottsdale", "name": "Scottsdale", "lat": -41.16065, "lon": 147.51704, "tz": "Australia/Hobart"},
+    {"id": "cressy", "name": "Cressy", "lat": -41.68995, "lon": 147.07940, "tz": "Australia/Hobart"},
+    {"id": "campbell-town", "name": "Campbell Town", "lat": -41.92882, "lon": 147.49351, "tz": "Australia/Hobart"},
+    {"id": "bothwell", "name": "Bothwell", "lat": -42.38417, "lon": 147.00770, "tz": "Australia/Hobart"},
+    {"id": "marion-bay", "name": "Marion Bay", "lat": -42.82031, "lon": 147.85862, "tz": "Australia/Hobart"},
+    {"id": "lileah", "name": "Lileah", "lat": -40.95343, "lon": 145.16153, "tz": "Australia/Hobart"},
+    {"id": "sisters-creek", "name": "Sisters Creek", "lat": -40.96282, "lon": 145.55378, "tz": "Australia/Hobart"},
+    {"id": "yolla", "name": "Yolla", "lat": -41.12568, "lon": 145.71623, "tz": "Australia/Hobart"},
+    {"id": "sheffield", "name": "Sheffield", "lat": -41.38213, "lon": 146.32468, "tz": "Australia/Hobart"},
+    {"id": "deloraine", "name": "Deloraine", "lat": -41.52165, "lon": 146.64720, "tz": "Australia/Hobart"},
+    {"id": "hagley", "name": "Hagley", "lat": -41.52596, "lon": 146.89845, "tz": "Australia/Hobart"},
+    {"id": "poatina", "name": "Poatina", "lat": -41.79582, "lon": 146.96105, "tz": "Australia/Hobart"},
+    {"id": "macquarie-barton", "name": "Macquarie Rd/Barton Rd", "lat": -41.86013, "lon": 147.24645, "tz": "Australia/Hobart"},
+    {"id": "winnaleah", "name": "Winnaleah", "lat": -41.09854, "lon": 147.82624, "tz": "Australia/Hobart"},
+    {"id": "branxholm", "name": "Branxholm", "lat": -41.16832, "lon": 147.73651, "tz": "Australia/Hobart"},
+    {"id": "pyengana", "name": "Pyengana", "lat": -41.28880, "lon": 148.00670, "tz": "Australia/Hobart"},
+    {"id": "vic-dean", "name": "Dean", "lat": -37.46667, "lon": 143.98333, "tz": "Australia/Melbourne"},
+    {"id": "vic-newlyn", "name": "Newlyn", "lat": -37.41700, "lon": 143.98100, "tz": "Australia/Melbourne"},
+    {"id": "vic-blampied", "name": "Blampied", "lat": -37.36667, "lon": 144.05000, "tz": "Australia/Melbourne"},
+    {"id": "vic-glenlyon", "name": "Glenlyon", "lat": -37.25000, "lon": 144.25000, "tz": "Australia/Melbourne"},
+    {"id": "vic-pootilla", "name": "Pootilla", "lat": -37.52400, "lon": 143.96700, "tz": "Australia/Melbourne"},
+    {"id": "vic-bungaree", "name": "Bungaree", "lat": -37.55722, "lon": 144.00444, "tz": "Australia/Melbourne"},
+    {"id": "vic-dunnstown", "name": "Dunnstown", "lat": -37.60000, "lon": 143.98333, "tz": "Australia/Melbourne"},
+    {"id": "vic-bolwarrah", "name": "Bolwarrah", "lat": -37.51667, "lon": 144.10000, "tz": "Australia/Melbourne"},
+    {"id": "vic-windermere", "name": "Windermere", "lat": -37.51167, "lon": 143.70611, "tz": "Australia/Melbourne"},
+    {"id": "vic-tourello", "name": "Tourello", "lat": -37.35340, "lon": 143.77660, "tz": "Australia/Melbourne"}
 ]
 
 API_URL = "https://api.open-meteo.com/v1/forecast"
@@ -39,14 +61,14 @@ MAX_ATTEMPTS = 4          # tries per region
 PAUSE_BETWEEN_REGIONS = 1.5  # seconds
 
 
-def fetch_region_week(lat, lon):
+def fetch_region_week(lat, lon, tz):
     """Calls Open-Meteo for one location and returns a 7-day list of
     {date, eto, rain} — the exact shape the calculator expects."""
     params = {
         "latitude": lat,
         "longitude": lon,
         "daily": "et0_fao_evapotranspiration,precipitation_sum",
-        "timezone": "Australia/Hobart",
+        "timezone": tz,
         "forecast_days": 7,
     }
     url = API_URL + "?" + urllib.parse.urlencode(params)
@@ -75,7 +97,7 @@ def fetch_with_retries(region):
     last_exc = None
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            return fetch_region_week(region["lat"], region["lon"])
+            return fetch_region_week(region["lat"], region["lon"], region.get("tz", "Australia/Hobart"))
         except Exception as exc:
             last_exc = exc
             print(f"  attempt {attempt}/{MAX_ATTEMPTS} failed for {region['name']}: {exc}")

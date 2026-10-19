@@ -62,9 +62,15 @@
   .brand-logo { height: 38px; width: auto; display: block; flex: none; }
   .brand-divider { width: 1px; height: 30px; background: var(--border-hairline); flex: none; }
   header.brief-header h1 {
-    font-size: 19px;
+    font-size: 16px;
     margin: 0;
     font-weight: 700;
+    white-space: nowrap;
+  }
+  @media (max-width: 520px) {
+    header.brief-header { flex-wrap: wrap; }
+    header.brief-header h1 { font-size: 13px; }
+    .brand-logo { height: 30px; }
   }
   .header-right { text-align: right; }
   .header-right .data-as-of {
@@ -112,7 +118,7 @@
     flex-wrap: wrap;
     margin-top: 4px;
   }
-  .map-svg-wrap { flex: 0 0 210px; max-width: 210px; }
+  .map-svg-wrap { flex: 0 0 280px; max-width: 280px; }
   svg.tas-map { width: 100%; height: auto; display: block; overflow: visible; }
   .tas-landmass { fill: var(--map-land); stroke: var(--border-hairline); stroke-width: 1.5; }
   .region-dot-ring { fill: var(--surface-1); }
@@ -121,6 +127,10 @@
   .region-dot.selected { fill: var(--brand-primary); }
   .region-hit { fill: transparent; cursor: pointer; }
   .map-legend { flex: 1 1 220px; min-width: 200px; padding-top: 2px; }
+  .state-tabs { display: inline-flex; gap: 4px; padding: 3px; background: var(--page-plane); border: 1px solid var(--border-hairline); border-radius: 999px; margin: 4px 0 10px; }
+  .state-tab { font-family: inherit; font-size: 13px; font-weight: 650; color: var(--text-secondary); background: transparent; border: none; border-radius: 999px; padding: 6px 16px; cursor: pointer; }
+  .state-tab:hover { color: var(--text-primary); }
+  .state-tab.active { background: var(--brand-primary); color: #ffffff; }
   .region-list { display: flex; flex-direction: column; gap: 2px; }
   .region-list-btn {
     display: flex; align-items: center; gap: 9px;
@@ -366,10 +376,14 @@
 
   <div class="card">
     <h2 class="heading-font">1. Select your region</h2>
-    <p class="card-sub">Click a marker to choose the growing region nearest you.</p>
+    <div class="state-tabs" role="tablist" aria-label="State">
+      <button type="button" class="state-tab active" data-state="TAS" role="tab" aria-selected="true">Tasmania</button>
+      <button type="button" class="state-tab" data-state="VIC" role="tab" aria-selected="false">Victoria</button>
+    </div>
+    <p class="card-sub" id="region-sub">Click a marker or pick a location from the list.</p>
 
     <div class="map-layout">
-      <div class="map-svg-wrap">
+      <div class="map-svg-wrap" id="map-wrap">
         <svg class="tas-map" id="tas-map" viewBox="0 0 380 395.8" role="group" aria-label="Map of Tasmania — click a marker to select a growing region"></svg>
       </div>
       <div class="map-legend">
@@ -490,15 +504,36 @@
   }
 
   var REGIONS = [
-    { id: "smithton", name: "Smithton", x: 68.5, y: 56.4, live: false, week: scaledWeek(1.05) },
-    { id: "table-cape", name: "Table Cape / Wynyard", x: 120.3, y: 78.0, live: false, week: scaledWeek(0.97) },
-    { id: "sassafras", name: "Sassafras / Devonport", x: 185.2, y: 101.3, live: false, week: scaledWeek(1.10) },
-    { id: "waterhouse", name: "Waterhouse", x: 280.9, y: 63.0, live: false, week: scaledWeek(0.95) },
-    { id: "scottsdale", name: "Scottsdale", x: 271.7, y: 88.7, live: false, week: scaledWeek(1.02) },
-    { id: "cressy", name: "Cressy", x: 232.7, y: 147.7, live: false, week: scaledWeek(1.20, 0.6) },
-    { id: "campbell-town", name: "Campbell Town", x: 267.3, y: 175.6, live: false, week: scaledWeek(1.08) },
-    { id: "bothwell", name: "Bothwell", x: 225.0, y: 226.5, live: false, week: scaledWeek(1.15, 0.8) },
-    { id: "marion-bay", name: "Marion Bay", x: 293.4, y: 274.3, live: false, week: scaledWeek(0.92) }
+    { id: "smithton", name: "Smithton", state: "TAS", lat: -40.84177, lon: 145.12585, x: 74.2, y: 57.1, live: false, week: scaledWeek(0.92) },
+    { id: "table-cape", name: "Table Cape / Wynyard", state: "TAS", lat: -40.95675, lon: 145.71819, x: 119.8, y: 71.6, live: false, week: scaledWeek(1.13) },
+    { id: "sassafras", name: "Sassafras / Devonport", state: "TAS", lat: -41.29055, lon: 146.50511, x: 186.6, y: 105.7, live: false, week: scaledWeek(1.01) },
+    { id: "waterhouse", name: "Waterhouse", state: "TAS", lat: -40.93138, lon: 147.61799, x: 277.7, y: 64.3, live: false, week: scaledWeek(1.22) },
+    { id: "scottsdale", name: "Scottsdale", state: "TAS", lat: -41.16065, lon: 147.51704, x: 269.3, y: 90.0, live: false, week: scaledWeek(1.1) },
+    { id: "cressy", name: "Cressy", state: "TAS", lat: -41.68995, lon: 147.07940, x: 233.3, y: 149.8, live: false, week: scaledWeek(0.98) },
+    { id: "campbell-town", name: "Campbell Town", state: "TAS", lat: -41.92882, lon: 147.49351, x: 266.9, y: 176.0, live: false, week: scaledWeek(1.19) },
+    { id: "bothwell", name: "Bothwell", state: "TAS", lat: -42.38417, lon: 147.00770, x: 227.0, y: 227.5, live: false, week: scaledWeek(1.07) },
+    { id: "marion-bay", name: "Marion Bay", state: "TAS", lat: -42.82031, lon: 147.85862, x: 296.2, y: 275.4, live: false, week: scaledWeek(0.95) },
+    { id: "lileah", name: "Lileah", state: "TAS", lat: -40.95343, lon: 145.16153, x: 77.1, y: 69.5, live: false, week: scaledWeek(1.16) },
+    { id: "sisters-creek", name: "Sisters Creek", state: "TAS", lat: -40.96282, lon: 145.55378, x: 109.1, y: 70.1, live: false, week: scaledWeek(1.04) },
+    { id: "yolla", name: "Yolla", state: "TAS", lat: -41.12568, lon: 145.71623, x: 122.3, y: 88.2, live: false, week: scaledWeek(0.92) },
+    { id: "sheffield", name: "Sheffield", state: "TAS", lat: -41.38213, lon: 146.32468, x: 171.8, y: 116.2, live: false, week: scaledWeek(1.13) },
+    { id: "deloraine", name: "Deloraine", state: "TAS", lat: -41.52165, lon: 146.64720, x: 198.1, y: 131.4, live: false, week: scaledWeek(1.01) },
+    { id: "hagley", name: "Hagley", state: "TAS", lat: -41.52596, lon: 146.89845, x: 218.6, y: 131.6, live: false, week: scaledWeek(1.22) },
+    { id: "poatina", name: "Poatina", state: "TAS", lat: -41.79582, lon: 146.96105, x: 223.5, y: 161.8, live: false, week: scaledWeek(1.1) },
+    { id: "macquarie-barton", name: "Macquarie Rd/Barton Rd", state: "TAS", lat: -41.86013, lon: 147.24645, x: 246.8, y: 168.6, live: false, week: scaledWeek(0.98) },
+    { id: "winnaleah", name: "Winnaleah", state: "TAS", lat: -41.09854, lon: 147.82624, x: 294.6, y: 82.7, live: false, week: scaledWeek(1.19) },
+    { id: "branxholm", name: "Branxholm", state: "TAS", lat: -41.16832, lon: 147.73651, x: 287.2, y: 90.7, live: false, week: scaledWeek(1.07) },
+    { id: "pyengana", name: "Pyengana", state: "TAS", lat: -41.28880, lon: 148.00670, x: 309.2, y: 103.8, live: false, week: scaledWeek(0.95) },
+    { id: "vic-dean", name: "Dean", state: "VIC", lat: -37.46667, lon: 143.98333, live: false, week: scaledWeek(0.9) },
+    { id: "vic-newlyn", name: "Newlyn", state: "VIC", lat: -37.41700, lon: 143.98100, live: false, week: scaledWeek(1.05) },
+    { id: "vic-blampied", name: "Blampied", state: "VIC", lat: -37.36667, lon: 144.05000, live: false, week: scaledWeek(0.93) },
+    { id: "vic-glenlyon", name: "Glenlyon", state: "VIC", lat: -37.25000, lon: 144.25000, live: false, week: scaledWeek(1.08) },
+    { id: "vic-pootilla", name: "Pootilla", state: "VIC", lat: -37.52400, lon: 143.96700, live: false, week: scaledWeek(0.96) },
+    { id: "vic-bungaree", name: "Bungaree", state: "VIC", lat: -37.55722, lon: 144.00444, live: false, week: scaledWeek(1.11) },
+    { id: "vic-dunnstown", name: "Dunnstown", state: "VIC", lat: -37.60000, lon: 143.98333, live: false, week: scaledWeek(0.99) },
+    { id: "vic-bolwarrah", name: "Bolwarrah", state: "VIC", lat: -37.51667, lon: 144.10000, live: false, week: scaledWeek(1.14) },
+    { id: "vic-windermere", name: "Windermere", state: "VIC", lat: -37.51167, lon: 143.70611, live: false, week: scaledWeek(1.02) },
+    { id: "vic-tourello", name: "Tourello", state: "VIC", lat: -37.35340, lon: 143.77660, live: false, week: scaledWeek(0.9) }
   ];
 
   /* ------------------------------------------------------------------
@@ -604,6 +639,7 @@
    * ------------------------------------------------------------------ */
   var state = {
     regionId: "smithton",
+    stateTab: "TAS",
     varietyId: "russet-burbank",
     plantingDate: null,
     customRegion: null
@@ -648,11 +684,36 @@
    * ------------------------------------------------------------------ */
   var TASMANIA_PATH = "M 28.4 29.5 L 30.9 54.9 L 23.2 64.1 L 23.2 73.3 L 36.5 113.4 L 33.5 119.3 L 44.2 133.3 L 48.2 151.3 L 75.9 188.9 L 76.6 203.6 L 69.6 206.6 L 80.3 248.9 L 77.7 254.4 L 85.8 260.0 L 96.8 294.6 L 104.9 294.9 L 126.3 334.0 L 134.4 331.0 L 131.1 340.6 L 140.7 350.5 L 140.7 359.7 L 156.9 354.2 L 161.6 359.4 L 182.6 357.9 L 195.5 369.7 L 209.5 370.4 L 229.4 331.0 L 237.9 332.9 L 234.2 350.2 L 227.6 342.4 L 231.6 354.6 L 239.7 349.8 L 246.7 356.4 L 252.2 342.8 L 248.2 332.1 L 257.0 328.1 L 248.5 299.4 L 251.1 287.2 L 255.2 288.7 L 254.1 305.3 L 261.8 308.2 L 268.1 298.6 L 263.3 288.7 L 266.2 283.2 L 275.4 290.2 L 286.1 290.5 L 290.2 305.3 L 285.7 305.3 L 281.3 293.5 L 274.3 293.1 L 276.9 298.6 L 272.1 300.5 L 272.1 308.6 L 279.1 311.9 L 275.8 315.2 L 286.8 326.6 L 293.8 316.7 L 301.9 325.5 L 299.0 301.9 L 304.9 291.3 L 294.6 278.0 L 308.9 271.4 L 318.5 274.0 L 311.5 264.4 L 318.9 261.1 L 310.8 251.9 L 307.8 267.3 L 301.2 268.8 L 304.1 261.1 L 298.3 250.0 L 306.7 247.1 L 305.3 232.7 L 315.6 199.6 L 330.7 202.5 L 331.4 219.8 L 336.6 211.0 L 332.9 208.0 L 335.4 178.6 L 331.4 167.5 L 336.2 147.3 L 332.9 126.7 L 341.0 107.9 L 334.3 89.1 L 341.3 74.7 L 332.5 57.1 L 322.6 53.8 L 320.0 47.9 L 323.7 43.8 L 317.8 47.5 L 307.1 44.9 L 302.7 55.2 L 283.2 52.7 L 262.5 73.3 L 256.3 65.5 L 248.9 65.5 L 242.7 72.5 L 226.1 70.0 L 192.2 86.5 L 173.4 90.2 L 125.2 74.0 L 117.8 64.4 L 125.2 54.1 L 117.8 54.9 L 116.7 63.7 L 110.1 63.3 L 99.4 53.8 L 86.2 53.4 L 81.0 48.2 L 86.9 43.8 L 96.1 46.4 L 97.9 42.3 L 77.7 37.6 L 76.6 42.7 L 67.4 42.0 L 65.2 46.4 L 50.4 23.2 L 40.5 33.9 Z";
 
+  var lastRegionInTab = { TAS: "smithton", VIC: "vic-dean" };
+
+  function regionsInTab() {
+    return REGIONS.filter(function (r) { return r.state === state.stateTab; })
+      .sort(function (a, b) { return a.name.localeCompare(b.name); });
+  }
+
   function selectRegion(id) {
     state.regionId = id;
+    for (var i = 0; i < REGIONS.length; i++) {
+      if (REGIONS[i].id === id) lastRegionInTab[REGIONS[i].state] = id;
+    }
     renderMap();
     renderRegionList();
     renderAll();
+  }
+
+  function setTab(tab) {
+    state.stateTab = tab;
+    var tabs = document.querySelectorAll(".state-tab");
+    for (var i = 0; i < tabs.length; i++) {
+      var on = tabs[i].getAttribute("data-state") === tab;
+      tabs[i].className = "state-tab" + (on ? " active" : "");
+      tabs[i].setAttribute("aria-selected", on ? "true" : "false");
+    }
+    document.getElementById("map-wrap").style.display = tab === "TAS" ? "" : "none";
+    document.getElementById("region-sub").textContent = tab === "TAS"
+      ? "Click a marker or pick a location from the list."
+      : "Pick the location nearest you.";
+    selectRegion(lastRegionInTab[tab]);
   }
 
   function renderMap() {
@@ -661,20 +722,24 @@
     svg.appendChild(el("path", { d: TASMANIA_PATH, class: "tas-landmass" }));
 
     REGIONS.forEach(function (r) {
+      if (r.state !== "TAS") return;
       var isSelected = r.id === state.regionId;
-      var ring = el("circle", { cx: r.x, cy: r.y, r: isSelected ? 10 : 8, class: "region-dot-ring" });
-      var dot = el("circle", { cx: r.x, cy: r.y, r: isSelected ? 6.5 : 5, class: "region-dot" + (isSelected ? " selected" : "") });
+      var ring = el("circle", { cx: r.x, cy: r.y, r: isSelected ? 9 : 7, class: "region-dot-ring" });
+      var dot = el("circle", { cx: r.x, cy: r.y, r: isSelected ? 6 : 4.5, class: "region-dot" + (isSelected ? " selected" : "") });
       var hit = el("circle", {
-        cx: r.x, cy: r.y, r: 14, class: "region-hit",
+        cx: r.x, cy: r.y, r: 8, class: "region-hit",
         role: "button", tabindex: "0", "aria-label": "Select " + r.name,
         "aria-pressed": isSelected ? "true" : "false"
       });
+      var title = el("title", {});
+      title.textContent = r.name;
+      hit.appendChild(title);
       hit.addEventListener("click", function () { selectRegion(r.id); });
       hit.addEventListener("keydown", function (evt) {
         if (evt.key === "Enter" || evt.key === " ") { evt.preventDefault(); selectRegion(r.id); }
       });
-      hit.addEventListener("mouseenter", function () { dot.setAttribute("r", isSelected ? 7.5 : 6.5); });
-      hit.addEventListener("mouseleave", function () { dot.setAttribute("r", isSelected ? 6.5 : 5); });
+      hit.addEventListener("mouseenter", function () { dot.setAttribute("r", isSelected ? 7 : 6); });
+      hit.addEventListener("mouseleave", function () { dot.setAttribute("r", isSelected ? 6 : 4.5); });
 
       svg.appendChild(ring);
       svg.appendChild(dot);
@@ -685,7 +750,7 @@
   function renderRegionList() {
     var wrap = document.getElementById("region-list");
     clear(wrap);
-    REGIONS.forEach(function (reg) {
+    regionsInTab().forEach(function (reg) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "region-list-btn" + (reg.id === state.regionId ? " active" : "");
@@ -972,6 +1037,10 @@
     }
     fetchCustomLocation(lat, lon);
   });
+  var tabButtons = document.querySelectorAll(".state-tab");
+  for (var ti = 0; ti < tabButtons.length; ti++) {
+    (function (b) { b.addEventListener("click", function () { setTab(b.getAttribute("data-state")); }); })(tabButtons[ti]);
+  }
   renderMap();
   renderRegionList();
   renderPills();
