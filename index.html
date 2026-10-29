@@ -376,10 +376,6 @@
 
   <div class="card">
     <h2 class="heading-font">1. Select your region</h2>
-    <div class="state-tabs" role="tablist" aria-label="State">
-      <button type="button" class="state-tab active" data-state="TAS" role="tab" aria-selected="true">Tasmania</button>
-      <button type="button" class="state-tab" data-state="VIC" role="tab" aria-selected="false">Victoria</button>
-    </div>
     <p class="card-sub" id="region-sub">Click a marker or pick a location from the list.</p>
 
     <div class="map-layout">
@@ -524,16 +520,6 @@
     { id: "winnaleah", name: "Winnaleah", state: "TAS", lat: -41.09854, lon: 147.82624, x: 294.6, y: 82.7, live: false, week: scaledWeek(1.19) },
     { id: "branxholm", name: "Branxholm", state: "TAS", lat: -41.16832, lon: 147.73651, x: 287.2, y: 90.7, live: false, week: scaledWeek(1.07) },
     { id: "pyengana", name: "Pyengana", state: "TAS", lat: -41.28880, lon: 148.00670, x: 309.2, y: 103.8, live: false, week: scaledWeek(0.95) },
-    { id: "vic-dean", name: "Dean", state: "VIC", lat: -37.46667, lon: 143.98333, live: false, week: scaledWeek(0.9) },
-    { id: "vic-newlyn", name: "Newlyn", state: "VIC", lat: -37.41700, lon: 143.98100, live: false, week: scaledWeek(1.05) },
-    { id: "vic-blampied", name: "Blampied", state: "VIC", lat: -37.36667, lon: 144.05000, live: false, week: scaledWeek(0.93) },
-    { id: "vic-glenlyon", name: "Glenlyon", state: "VIC", lat: -37.25000, lon: 144.25000, live: false, week: scaledWeek(1.08) },
-    { id: "vic-pootilla", name: "Pootilla", state: "VIC", lat: -37.52400, lon: 143.96700, live: false, week: scaledWeek(0.96) },
-    { id: "vic-bungaree", name: "Bungaree", state: "VIC", lat: -37.55722, lon: 144.00444, live: false, week: scaledWeek(1.11) },
-    { id: "vic-dunnstown", name: "Dunnstown", state: "VIC", lat: -37.60000, lon: 143.98333, live: false, week: scaledWeek(0.99) },
-    { id: "vic-bolwarrah", name: "Bolwarrah", state: "VIC", lat: -37.51667, lon: 144.10000, live: false, week: scaledWeek(1.14) },
-    { id: "vic-windermere", name: "Windermere", state: "VIC", lat: -37.51167, lon: 143.70611, live: false, week: scaledWeek(1.02) },
-    { id: "vic-tourello", name: "Tourello", state: "VIC", lat: -37.35340, lon: 143.77660, live: false, week: scaledWeek(0.9) }
   ];
 
   /* ------------------------------------------------------------------
@@ -684,7 +670,7 @@
    * ------------------------------------------------------------------ */
   var TASMANIA_PATH = "M 28.4 29.5 L 30.9 54.9 L 23.2 64.1 L 23.2 73.3 L 36.5 113.4 L 33.5 119.3 L 44.2 133.3 L 48.2 151.3 L 75.9 188.9 L 76.6 203.6 L 69.6 206.6 L 80.3 248.9 L 77.7 254.4 L 85.8 260.0 L 96.8 294.6 L 104.9 294.9 L 126.3 334.0 L 134.4 331.0 L 131.1 340.6 L 140.7 350.5 L 140.7 359.7 L 156.9 354.2 L 161.6 359.4 L 182.6 357.9 L 195.5 369.7 L 209.5 370.4 L 229.4 331.0 L 237.9 332.9 L 234.2 350.2 L 227.6 342.4 L 231.6 354.6 L 239.7 349.8 L 246.7 356.4 L 252.2 342.8 L 248.2 332.1 L 257.0 328.1 L 248.5 299.4 L 251.1 287.2 L 255.2 288.7 L 254.1 305.3 L 261.8 308.2 L 268.1 298.6 L 263.3 288.7 L 266.2 283.2 L 275.4 290.2 L 286.1 290.5 L 290.2 305.3 L 285.7 305.3 L 281.3 293.5 L 274.3 293.1 L 276.9 298.6 L 272.1 300.5 L 272.1 308.6 L 279.1 311.9 L 275.8 315.2 L 286.8 326.6 L 293.8 316.7 L 301.9 325.5 L 299.0 301.9 L 304.9 291.3 L 294.6 278.0 L 308.9 271.4 L 318.5 274.0 L 311.5 264.4 L 318.9 261.1 L 310.8 251.9 L 307.8 267.3 L 301.2 268.8 L 304.1 261.1 L 298.3 250.0 L 306.7 247.1 L 305.3 232.7 L 315.6 199.6 L 330.7 202.5 L 331.4 219.8 L 336.6 211.0 L 332.9 208.0 L 335.4 178.6 L 331.4 167.5 L 336.2 147.3 L 332.9 126.7 L 341.0 107.9 L 334.3 89.1 L 341.3 74.7 L 332.5 57.1 L 322.6 53.8 L 320.0 47.9 L 323.7 43.8 L 317.8 47.5 L 307.1 44.9 L 302.7 55.2 L 283.2 52.7 L 262.5 73.3 L 256.3 65.5 L 248.9 65.5 L 242.7 72.5 L 226.1 70.0 L 192.2 86.5 L 173.4 90.2 L 125.2 74.0 L 117.8 64.4 L 125.2 54.1 L 117.8 54.9 L 116.7 63.7 L 110.1 63.3 L 99.4 53.8 L 86.2 53.4 L 81.0 48.2 L 86.9 43.8 L 96.1 46.4 L 97.9 42.3 L 77.7 37.6 L 76.6 42.7 L 67.4 42.0 L 65.2 46.4 L 50.4 23.2 L 40.5 33.9 Z";
 
-  var lastRegionInTab = { TAS: "smithton", VIC: "vic-dean" };
+  var lastRegionInTab = { TAS: "smithton" };
 
   function regionsInTab() {
     return REGIONS.filter(function (r) { return r.state === state.stateTab; })

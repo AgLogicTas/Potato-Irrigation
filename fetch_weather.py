@@ -22,7 +22,7 @@ import urllib.parse
 from datetime import datetime, timezone, timedelta
 
 # Real-world coordinates for every location offered on the calculator
-# (Tasmania pins from the Google Earth file; Victoria = Ballarat area).
+# (Tasmania pins from the Google Earth file).
 REGIONS = [
     {"id": "smithton", "name": "Smithton", "lat": -40.84177, "lon": 145.12585, "tz": "Australia/Hobart"},
     {"id": "table-cape", "name": "Table Cape / Wynyard", "lat": -40.95675, "lon": 145.71819, "tz": "Australia/Hobart"},
@@ -43,17 +43,7 @@ REGIONS = [
     {"id": "macquarie-barton", "name": "Macquarie Rd/Barton Rd", "lat": -41.86013, "lon": 147.24645, "tz": "Australia/Hobart"},
     {"id": "winnaleah", "name": "Winnaleah", "lat": -41.09854, "lon": 147.82624, "tz": "Australia/Hobart"},
     {"id": "branxholm", "name": "Branxholm", "lat": -41.16832, "lon": 147.73651, "tz": "Australia/Hobart"},
-    {"id": "pyengana", "name": "Pyengana", "lat": -41.28880, "lon": 148.00670, "tz": "Australia/Hobart"},
-    {"id": "vic-dean", "name": "Dean", "lat": -37.46667, "lon": 143.98333, "tz": "Australia/Melbourne"},
-    {"id": "vic-newlyn", "name": "Newlyn", "lat": -37.41700, "lon": 143.98100, "tz": "Australia/Melbourne"},
-    {"id": "vic-blampied", "name": "Blampied", "lat": -37.36667, "lon": 144.05000, "tz": "Australia/Melbourne"},
-    {"id": "vic-glenlyon", "name": "Glenlyon", "lat": -37.25000, "lon": 144.25000, "tz": "Australia/Melbourne"},
-    {"id": "vic-pootilla", "name": "Pootilla", "lat": -37.52400, "lon": 143.96700, "tz": "Australia/Melbourne"},
-    {"id": "vic-bungaree", "name": "Bungaree", "lat": -37.55722, "lon": 144.00444, "tz": "Australia/Melbourne"},
-    {"id": "vic-dunnstown", "name": "Dunnstown", "lat": -37.60000, "lon": 143.98333, "tz": "Australia/Melbourne"},
-    {"id": "vic-bolwarrah", "name": "Bolwarrah", "lat": -37.51667, "lon": 144.10000, "tz": "Australia/Melbourne"},
-    {"id": "vic-windermere", "name": "Windermere", "lat": -37.51167, "lon": 143.70611, "tz": "Australia/Melbourne"},
-    {"id": "vic-tourello", "name": "Tourello", "lat": -37.35340, "lon": 143.77660, "tz": "Australia/Melbourne"}
+    {"id": "pyengana", "name": "Pyengana", "lat": -41.28880, "lon": 148.00670, "tz": "Australia/Hobart"}
 ]
 
 API_URL = "https://api.open-meteo.com/v1/forecast"
